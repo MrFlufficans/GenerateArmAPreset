@@ -1,0 +1,4 @@
+-I
+C:\msys64\mingw64\include
+-I
+.
