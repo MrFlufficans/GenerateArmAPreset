@@ -1,4 +1,3 @@
-#include "tre/tre.h"
 #include <stdio.h>
 #include <regex.h>
 
@@ -22,21 +21,23 @@ int fileLength(char *filename) {
 
 int printFile(char *filename, int lineCount) {
 	FILE *pInFile;
-	int i = 0;
-	
+	FILE *pOutFile;
+
+
+
 	pInFile = fopen(filename, "r");
-	for (; i < lineCount; i++) {
+	for (int i = 0; i < lineCount; i++) {
 		regex_t regex;
 		char line[200];
 		int regResult;
+		size_t nMatch = 2;
 		regmatch_t pMatch[2];
-		char *pattern = "([0-9]{8,15})";
-
+		char *pPattern = "([0-9]{8,15})";
 		fgets(line, 200, pInFile);
-		regResult = regcomp(&regex, pattern, REG_EXTENDED);
-		regResult =	regexec(&regex, line, 0, pMatch, 0);
+		regResult = regcomp(&regex, pPattern, REG_EXTENDED);
+		regResult =	regexec(&regex, line, nMatch, pMatch, 0);
 		if (!regResult) {
-			printf("%.*s", pMatch[1].rm_eo - pMatch[1].rm_so, &line[pMatch[1].rm_so]);
+			printf("%.*s\n", pMatch[1].rm_eo - pMatch[1].rm_so, &line[pMatch[1].rm_so]);
 
 			//printf("%.*s", pMatch[1].rm_eo - pMatch[1].rm_so, &line[pMatch[1].rm_so]);
 		}
