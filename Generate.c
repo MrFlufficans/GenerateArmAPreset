@@ -80,21 +80,6 @@ int stringLength(char *str) {
 	return length;
 }
 
-char* clean(char *filePath) {
-	char *newPath[stringLength(filePath) + 10];
-	int i = 0;
-
-	for (; *filePath != '\0'; filePath++) {
-		&newPath[i] = &filePath;
-		if (*filePath == " ") {
-
-		}
-		i++;
-	}
-	*newPath[i+1] = "\0";
-	return *newPath;
-}
-
 int main(int argc, char *argv[]) {
 
 	// Regular Variables
@@ -109,22 +94,17 @@ int main(int argc, char *argv[]) {
 	char backUp[length+40]; // Backup Path incase we need to create the Directory
 	
 	// Output Path for the Preset File
-	sprintf(newPath, "%s\\..\\Output\\GeneratedPreset.preset2", argv[0]);
+	snprintf(newPath, 100, "%s\\..\\Output\\GeneratedPreset.preset2", argv[0]);
 	puts(newPath);
 
 	pOutput = fopen(newPath, "w");
 	if (pOutput == 0) {
-		sprintf(backUp, "mkdir %s\\..\\Output", argv[0]);
+		snprintf(backUp, 100, "mkdir \"%s\\..\\Output\"", argv[0]);
+		printf("%s", backUp);
 		system(backUp);
 	} else {
 		fclose(pOutput);
 	}
-
-	//char *pDir = argv[0];
-	
-	//fprintf(pOutput, "%s\\..\\\n", argv[0]);
-	//printf("%s", argv[0]);
-	//fclose(pOutput);
 
 	lineCount = fileLength(pInput); // Get the Line Count of the File
 	printFile(pInput, newPath, lineCount); // Then run it through the Regex and output it

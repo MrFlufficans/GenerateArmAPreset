@@ -3,27 +3,16 @@
 
 // Get Total Character Count with extra for escaping Spaces
 int stringInfo(char *str) {
-	
 	int count = 0;
-
 	for (; *str != '\0'; str++) {
-		if (*str == 32) {
-			count++;
-		}
 		count++;
 	}
-
-
 	return count;
 }
 
+// Clean up the Path of Spaces for use in cmd
 int clean(char *filePath, char *newPath) {
 	for (; *filePath != '\0'; filePath++) {
-		
-		if (*filePath == 32) {
-			*newPath = 92;
-			newPath++;
-		}
 		*newPath = *filePath;
 		newPath++;
 	}
@@ -32,16 +21,19 @@ int clean(char *filePath, char *newPath) {
 }
 
 int main(int argc, char **argv) {
-	char *pTestPath = "Test Folder\\Another Test Folder\\test.txt";
-	FILE *testFile = 0;
-	int charCount = stringInfo(pTestPath);
-
 	
+	// Test Path
+	char *pTestPath = "Test Folder\\Another Test Folder\\test.txt";
+	FILE *OutFile = 0; // Output File
+	int charCount = stringInfo(pTestPath);
+	char finalPath[charCount];
+
 	char newPath[charCount];
 	char *pNewPath = newPath;
 	clean(pTestPath, pNewPath);
-	testFile = fopen(pNewPath, "w");
-	fprintf(testFile, "First String\nSecond String");
-	fclose(testFile);
+	snprintf(finalPath, charCount+1, "%s", pNewPath);
+	OutFile = fopen(finalPath, "w");
+	fprintf(OutFile, "First String");
+	fclose(OutFile);
 	return 0;
 }
