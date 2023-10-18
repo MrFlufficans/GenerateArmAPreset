@@ -90,17 +90,14 @@ int main(int argc, char *argv[]) {
 	
 	// File Path Shenanigens
 	length = stringLength(argv[0]); // Get String Length of Path to Executable
-	char newPath[length+30]; // Normal Path if the Output Directory exists
-	char backUp[length+40]; // Backup Path incase we need to create the Directory
+	char newPath[500]; // Normal Path if the Output Directory exists
+	char backUp[500]; // Backup Path incase we need to create the Directory
 	
 	// Output Path for the Preset File
-	snprintf(newPath, 100, "%s\\..\\Output\\GeneratedPreset.preset2", argv[0]);
-	puts(newPath);
-
+	snprintf(newPath, 500, "%s\\..\\Presets\\GeneratedPreset.preset2", argv[0]);
 	pOutput = fopen(newPath, "w");
 	if (pOutput == 0) {
-		snprintf(backUp, 100, "mkdir \"%s\\..\\Output\"", argv[0]);
-		printf("%s", backUp);
+		snprintf(backUp, 500, "mkdir \"%s\\..\\Presets\"", argv[0]);
 		system(backUp);
 	} else {
 		fclose(pOutput);
