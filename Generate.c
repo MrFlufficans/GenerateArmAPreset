@@ -4,20 +4,14 @@
 
 int fileLength(char *filename) {
 	int lineCount; // Line Count Number
-	char singleChar; // Single Char Buffer
 	FILE *pInFile; // File Pointer
-
 	pInFile = fopen(filename, "r"); // Open the Input File and store it in the pointer 
-
-	// Crawl through the File and look for Newline Characters to Increment the Line Count
-	do {
-		singleChar = fgetc(pInFile); // Grab a Single Character
-		// See if it's a New Line Character
-		if (singleChar == '\n') {
+	
+	for (int c; c != EOF; c = fgetc(pInFile)) {
+		if (c == 10) {
 			lineCount++; // Increment lineCount
 		}
-	} while (singleChar != EOF); // As long as the Character is not a 'E'nd 'O'f 'F'ile Character
-
+	}
 	fclose(pInFile); // Close the File after we have read it
 	return lineCount; // Return Line Count
 }
@@ -77,7 +71,7 @@ int stringLength(char *str) {
 	for (; *str != '\0'; str++) {
 		length++; // Increment length
 	};
-	return length;
+	return length; // Return the Length of the String
 }
 
 int main(int argc, char *argv[]) {
