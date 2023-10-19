@@ -2,18 +2,48 @@
 #include <regex.h>
 #include <stdlib.h>
 
-int fileLength(char *filename) {
-	int lineCount; // Line Count Number
-	FILE *pInFile; // File Pointer
-	pInFile = fopen(filename, "r"); // Open the Input File and store it in the pointer 
+int fileLength(char[]);
+int printFile(char[], char[], int);
+int strLength(char[]);
+
+int main(int argc, char *argv[]) {
+
+	// Regular Variables
+	int lineCount; // File Line Count
+	int length; // String Length
+	char *pInput = argv[1]; // Input File
+	FILE *pOutput = 0; // Debug File Pointer
 	
-	for (int c; c != EOF; c = fgetc(pInFile)) {
-		if (c == 10) {
-			lineCount++; // Increment lineCount
-		}
+	// File Path Shenanigens
+	length = strLength(argv[0]); // Get String Length of Path to Executable
+	char newPath[500]; // Normal Path if the Output Directory exists
+	char backUp[500]; // Backup Path incase we need to create the Directory
+	
+	// Output Path for the Preset File
+	snprintf(newPath, 500, "%s\\..\\Presets\\GeneratedPreset.preset2", argv[0]);
+	pOutput = fopen(newPath, "w");
+	if (pOutput == 0) {
+		snprintf(backUp, 500, "mkdir \"%s\\..\\Presets\"", argv[0]);
+		system(backUp);
+	} else {
+		fclose(pOutput);
 	}
-	fclose(pInFile); // Close the File after we have read it
-	return lineCount; // Return Line Count
+
+	lineCount = fileLength(pInput); // Get the Line Count of the File
+	printFile(pInput, newPath, lineCount); // Then run it through the Regex and output it
+	
+	return 0; // End
+}
+
+// Get length of String
+int strLength(char *str) {
+	int length = 0; // Length of String
+
+	// Increment through the String and return the Length
+	for (; *str != '\0'; str++) {
+		length++; // Increment length
+	};
+	return length; // Return the Length of the String
 }
 
 // Output the File contents to another File after being Filtered with Regex
@@ -25,7 +55,6 @@ int printFile(char *filename, char *path, int lineCount) {
 	pOutFile = fopen(path, "w");
 
 	// Print all the Header text to File
-	fprintf(pOutFile, "<?xml version='1.0' encoding='utf-8'?>\n");
 	fprintf(pOutFile, "<addons-presets>\n");
 	fprintf(pOutFile, "\t<last-update>2023-10-17T15:12:23.3346581+08:00</last-update>\n");
 	fprintf(pOutFile, "\t\t<published-ids>\n");
@@ -33,8 +62,8 @@ int printFile(char *filename, char *path, int lineCount) {
 	// Increment through the File and Sort it with Regex
 	for (int i = 0; i < lineCount; i++) {
 
-		char line[300]; // String Buffer of 300 bytes
-		
+		char line[300]; // String Buffer of 300 bytes		
+
 		regex_t regex; // Regex Struct 
 		int regResult; // Regex Compile Result
 		size_t nMatch = 2; // Long Long to Store Match Count?
@@ -63,42 +92,20 @@ int printFile(char *filename, char *path, int lineCount) {
 	return 0; // Return
 }
 
-// Get length of String
-int stringLength(char *str) {
-	int length = 0; // Length of String
-
-	// Increment through the String and return the Length
-	for (; *str != '\0'; str++) {
-		length++; // Increment length
-	};
-	return length; // Return the Length of the String
-}
-
-int main(int argc, char *argv[]) {
-
-	// Regular Variables
-	int lineCount; // File Line Count
-	int length; // String Length
-	char *pInput = argv[1]; // Input File
-	FILE *pOutput = 0; // Debug File Pointer
+// Get Length of File as Line Count
+int fileLength(char *filename) {
+	int lineCount = 0; // Line Count Number
+	FILE *pInFile; // File Pointer
+	pInFile = fopen(filename, "r"); // Open the Input File and store it in the pointer 
 	
-	// File Path Shenanigens
-	length = stringLength(argv[0]); // Get String Length of Path to Executable
-	char newPath[500]; // Normal Path if the Output Directory exists
-	char backUp[500]; // Backup Path incase we need to create the Directory
-	
-	// Output Path for the Preset File
-	snprintf(newPath, 500, "%s\\..\\Presets\\GeneratedPreset.preset2", argv[0]);
-	pOutput = fopen(newPath, "w");
-	if (pOutput == 0) {
-		snprintf(backUp, 500, "mkdir \"%s\\..\\Presets\"", argv[0]);
-		system(backUp);
-	} else {
-		fclose(pOutput);
+	// using fgetwc to get Wide Characters as Wide Ints
+	// unsigned short is what a Wide Int is
+	for (unsigned int c; c != WEOF; c = fgetwc(pInFile)) {
+		if (c == 10) {
+			lineCount++; // Increment lineCount
+		}
 	}
-
-	lineCount = fileLength(pInput); // Get the Line Count of the File
-	printFile(pInput, newPath, lineCount); // Then run it through the Regex and output it
-	
-	return 0; // End
+	lineCount++; // Increment one Last time to give the True Line Count
+	fclose(pInFile); // Close the File after we have read it
+	return lineCount; // Return Line Count
 }
